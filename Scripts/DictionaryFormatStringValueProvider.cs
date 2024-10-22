@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace System.StringFormats
+namespace System.Text.StringFormats
 {
     public class DictionaryFormatStringValueProvider : IKeyFormatStringValueProvider
     {

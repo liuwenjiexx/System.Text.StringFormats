@@ -1,5 +1,5 @@
 {
-  "name": "system.stringformat",
+  "name": "com.unity.stringformats",
   "displayName": "String Format",
   "version": "0.0.1",
   "unity": "2019.1",
@@ -8,9 +8,8 @@
     "string",
     "format"
   ],
-  "category": "Unity",
+  "category": "Text",
   "dependencies": {
 
-  },
-  "repoPackagePath": "../UnityPackages"
+  }
 }

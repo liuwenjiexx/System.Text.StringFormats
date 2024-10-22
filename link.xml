@@ -1,4 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <linker>
-  <assembly fullname="System.StringFormat" preserve="all"/>
+  <assembly fullname="System.Text.StringFormats" preserve="all"/>
 </linker>

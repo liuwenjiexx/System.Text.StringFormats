@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 
-namespace System.StringFormats
+namespace System.Text.StringFormats
 {
     internal static partial class Extension
     {

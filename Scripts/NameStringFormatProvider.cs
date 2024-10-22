@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 
 
-namespace System.StringFormats
+namespace System.Text.StringFormats
 {
     public class NameStringFormatProvider : IFormatProvider, ICustomFormatter
     {

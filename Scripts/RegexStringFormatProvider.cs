@@ -1,7 +1,8 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace System.StringFormats
+namespace System.Text.StringFormats
 {
 
     /// <summary>

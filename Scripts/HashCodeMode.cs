@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace System.StringFormats
+namespace System.Text.StringFormats
 {
     class HashCodeMode : INameFormatter
     {

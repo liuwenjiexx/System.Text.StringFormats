@@ -1,13 +1,14 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 
-namespace System.StringFormats
+namespace System.Text.StringFormats
 {
 
     /// <summary>
     /// format: Name[,Offset][,SeparatorChar]
     /// Name: FileName, FileNameWithoutExtension, FileExtension, DirectoryName, DirectoryPath, FilePath, FullPath, FullDirectoryPath
-    /// Offset: 正数右边开始，负数左边开始
+    /// Offset: 正数左边开始，负数右边开始
     /// SeparatorChar: /, \\
     /// </summary>
     abstract class PathStringFormatter : INameFormatter
@@ -137,19 +138,33 @@ namespace System.StringFormats
             }
             return path;
         }
-        string GetDirectoryName(string path)
+        string GetFullDirectoryName(string path)
         {
-            int index = path.LastIndexOf('/');
-            int index2 = path.LastIndexOf('\\');
-            if (index2 >= 0 && (index2 > index || index < 0))
-            {
-                index = index2;
-            }
+            int index = FindLastPathSeparatorIndex(path);
             if (index < 0)
                 return path;
             return path.Substring(0, index);
         }
-
+        static int FindLastPathSeparatorIndex(string path)
+        {
+            int index = path.LastIndexOf('/');
+            int index2 = path.LastIndexOf('\\');
+            if (index2 >= 0 && index2 > index)
+            {
+                index = index2;
+            }
+            return index;
+        }
+        static int FindPathSeparatorIndex(string path)
+        {
+            int index = path.IndexOf('/');
+            int index2 = path.IndexOf('\\');
+            if (index2 >= 0 && index2 < index)
+            {
+                index = index2;
+            }
+            return index;
+        }
 
         class FileNameFormatter : PathStringFormatter, INameFormatter
         {
@@ -183,7 +198,7 @@ namespace System.StringFormats
             public override string Name => "DirectoryName";
             protected override string OnFormat(string result, string[] formatArgs)
             {
-                result = Path.GetFileName(GetDirectoryName(result));
+                result = Path.GetFileName(GetFullDirectoryName(result));
                 return result;
             }
         }
@@ -200,7 +215,7 @@ namespace System.StringFormats
             public override string Name => "DirectoryPath";
             protected override string OnFormat(string result, string[] formatArgs)
             {
-                result = GetDirectoryName(result);
+                result = GetFullDirectoryName(result);
                 return result;
             }
         }
@@ -220,10 +235,20 @@ namespace System.StringFormats
             protected override string OnFormat(string result, string[] formatArgs)
             {
                 if (!Path.IsPathRooted(result))
-                    result = GetDirectoryName(Path.GetFullPath(result));
+                    result = GetFullDirectoryName(Path.GetFullPath(result));
                 return result;
             }
         }
-
+        class FirstDirectoryNameFormatter : PathStringFormatter, INameFormatter
+        {
+            public override string Name => "FirstDirectoryName";
+            protected override string OnFormat(string result, string[] formatArgs)
+            {
+                int index = FindPathSeparatorIndex(result);
+                if (index >= 0)
+                    return result.Substring(0, index);
+                return string.Empty;
+            }
+        }
     }
 }

@@ -4,14 +4,15 @@ using System.Globalization;
 using System.Reflection;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System;
 
-namespace System.StringFormats
+namespace System.Text.StringFormats
 {
 
     /// <summary>
     /// format: @[@][Type.]Member([arg0][,arg1]...)[,format]
     /// </summary>
-    public class CallStringFormatProvider : IFormatProvider, ICustomFormatter
+    public class CallStringFormatProvider : IFormatProvider, ICustomFormatter, IStringFormatter
     {
         private ICustomFormatter baseFormatter;
         static Regex methodRegex = new Regex("\\s*(?<action>@{1,2})\\s*(?<name>[^\\s\\(,]+)\\s*(\\((?<param>(.*?)(?<!\\\\))\\))?\\s*(,(?<format>.*))?\\s*");
@@ -30,8 +31,13 @@ namespace System.StringFormats
 
         public string Format(string format, object arg, IFormatProvider formatProvider)
         {
+            return Format(format, arg, new object[] { arg }, formatProvider);
+        }
+
+        public string Format(string format, object arg, object[] args, IFormatProvider formatProvider)
+        {
             string result;
-            if (HandleFormat(format, arg, out result))
+            if (HandleFormat(format, arg, args, out result))
                 return result;
 
             if (baseFormatter != null)
@@ -51,7 +57,7 @@ namespace System.StringFormats
         }
         static ParameterInfo[] EmptyParameterInfoArray = new ParameterInfo[0];
 
-        public bool HandleFormat(string format, object arg, out string result)
+        public bool HandleFormat(string format, object arg, object[] args, out string result)
         {
             result = null;
             if (string.IsNullOrEmpty(format))
@@ -238,8 +244,9 @@ namespace System.StringFormats
                                 for (int j = 0; j < array.Length; j++)
                                 {
                                     object val;
-                                    if (paramStrings[i + j] == "$")
-                                        val = instance;
+                                    if (StringFormat.ResolveRefArg(paramStrings[i + j], instance, args, out val))
+                                    {
+                                    }
                                     else
                                         val = paramStrings[i + j];
                                     val = Convert.ChangeType(val, elemType);
@@ -250,8 +257,9 @@ namespace System.StringFormats
                             else
                             {
                                 object val;
-                                if (paramStrings[i] == "$")
-                                    val = instance;
+                                if (StringFormat.ResolveRefArg(paramStrings[i], instance, args, out val))
+                                {
+                                }
                                 else
                                     val = paramStrings[i];
                                 val = Convert.ChangeType(val, pInfo.ParameterType);
